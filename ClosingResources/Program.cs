@@ -23,26 +23,27 @@ namespace ClosingResources
 
             // Create the full file name like this "C:\Users\username\AppData\Local\Temp\TestingResources.txt"
             string fullFileName = path + FileName;
-            StreamWriter outputFile;
 
             if (!File.Exists(fullFileName))
             {
                 // If the file does not exits, create it
-                outputFile = new StreamWriter( File.Create(fullFileName));
+                File.Create(fullFileName).Close(); // Close the stream immediately
             }
-            else
+
+            // Open the resource at the top of the using statement
+            using (StreamWriter outputFile = new StreamWriter(fullFileName))
             {
-                outputFile = new StreamWriter(fullFileName);
+                // Access the resource
+                Write(outputFile, "Start of file");
             }
-            
-            Write(outputFile, "Start of file");
+            // The resource is released when the using statement is exiting
 
             // Wait for the user to close the program
             Console.WriteLine("Press enter to exit.");
             Console.ReadKey();
 
-            // Close the allocated resource
-            outputFile.Close();
+            // Closing the allocated resource is no longer needed
+            //outputFile.Close();
         }
 
         public static void Write(StreamWriter sr, string text)
